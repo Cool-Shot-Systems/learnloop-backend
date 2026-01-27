@@ -14,7 +14,7 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 - **ORM**: Prisma
 - **Auth**: Email + password with JWT
 
-## Current Status: Phase 4 Complete ✅
+## Current Status: Phase 5 Complete ✅
 
 ### Phase 1: Database Design ✅
 - ✅ Database schema design
@@ -42,6 +42,13 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 - ✅ Post existence validation
 - ✅ Hard delete for comments
 - ✅ Ownership-based authorization
+
+### Phase 5: Votes and Learning Score ✅
+- ✅ Upvote system for posts and comments
+- ✅ Prevent duplicate votes and self-voting
+- ✅ Learning score auto-updates (+1 on upvote, -1 on removal)
+- ✅ Transaction-based score consistency
+- ✅ Vote count API with optional auth
 
 ### Database Models
 1. **User** - User accounts with UUID, email, username, and learning score
@@ -136,7 +143,15 @@ PUT    /api/comments/:id (auth required)
 DELETE /api/comments/:id (auth required)
 ```
 
-See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, and [COMMENTS.md](./COMMENTS.md) for comments documentation.
+### Votes
+```
+POST   /api/votes (auth required)
+DELETE /api/votes/:id (auth required)
+GET    /api/votes/posts/:id (optional auth)
+GET    /api/votes/comments/:id (optional auth)
+```
+
+See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, [COMMENTS.md](./COMMENTS.md) for comments, and [VOTES.md](./VOTES.md) for votes documentation.
 
 ## Documentation
 
@@ -144,6 +159,7 @@ See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, a
 - **[AUTH.md](./AUTH.md)** - Authentication and authorization guide
 - **[POSTS.md](./POSTS.md)** - Topics and Posts API documentation
 - **[COMMENTS.md](./COMMENTS.md)** - Comments API documentation
+- **[VOTES.md](./VOTES.md)** - Votes and Learning Score API documentation
 - **[DATABASE_INIT.md](./DATABASE_INIT.md)** - Database initialization details
 
 ## Project Structure
@@ -155,14 +171,16 @@ learnloop-backend/
 │   │   ├── authController.js        # Auth logic
 │   │   ├── topicsController.js      # Topics logic
 │   │   ├── postsController.js       # Posts logic
-│   │   └── commentsController.js    # Comments logic
+│   │   ├── commentsController.js    # Comments logic
+│   │   └── votesController.js       # Votes logic
 │   ├── middleware/
 │   │   └── authMiddleware.js        # JWT verification
 │   └── routes/
 │       ├── authRoutes.js            # Auth endpoints
 │       ├── topicsRoutes.js          # Topics endpoints
 │       ├── postsRoutes.js           # Posts endpoints
-│       └── commentsRoutes.js        # Comments endpoints
+│       ├── commentsRoutes.js        # Comments endpoints
+│       └── votesRoutes.js           # Votes endpoints
 ├── prisma/
 │   ├── schema.prisma                # Database schema
 │   └── migrations/                  # Migration files
@@ -175,12 +193,13 @@ learnloop-backend/
 
 ## What's Next
 
-Phase 4 is complete. Future phases will implement:
-- Voting system (upvotes only on posts and comments)
+Phase 5 is complete. Future phases will implement:
 - Saved posts functionality
-- User profiles
-- Feed ranking
+- User profiles with learning score display
+- Feed ranking based on votes
+- Leaderboards
 - Moderation features
+- Admin tools
 
 ## License
 
