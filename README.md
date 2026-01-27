@@ -14,7 +14,7 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 - **ORM**: Prisma
 - **Auth**: Email + password with JWT
 
-## Current Status: Phase 3 Complete ✅
+## Current Status: Phase 4 Complete ✅
 
 ### Phase 1: Database Design ✅
 - ✅ Database schema design
@@ -34,6 +34,13 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 - ✅ Posts CRUD with strict validation
 - ✅ Word count enforcement (80-220 words)
 - ✅ Soft delete for posts
+- ✅ Ownership-based authorization
+
+### Phase 4: Comments ✅
+- ✅ Comments CRUD operations
+- ✅ Minimum 20 characters validation
+- ✅ Post existence validation
+- ✅ Hard delete for comments
 - ✅ Ownership-based authorization
 
 ### Database Models
@@ -114,19 +121,29 @@ GET /api/topics/by-name/:name
 POST   /api/posts (auth required)
 GET    /api/posts
 GET    /api/posts/:id
+GET    /api/posts/:postId/comments
 GET    /api/posts/topic/:topicId
 GET    /api/posts/author/:authorId
 PUT    /api/posts/:id (auth required)
 DELETE /api/posts/:id (auth required)
 ```
 
-See [AUTH.md](./AUTH.md) for authentication documentation and [POSTS.md](./POSTS.md) for posts documentation.
+### Comments
+```
+POST   /api/comments (auth required)
+GET    /api/comments/:id
+PUT    /api/comments/:id (auth required)
+DELETE /api/comments/:id (auth required)
+```
+
+See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, and [COMMENTS.md](./COMMENTS.md) for comments documentation.
 
 ## Documentation
 
 - **[SETUP.md](./SETUP.md)** - Database setup and Prisma configuration
 - **[AUTH.md](./AUTH.md)** - Authentication and authorization guide
 - **[POSTS.md](./POSTS.md)** - Topics and Posts API documentation
+- **[COMMENTS.md](./COMMENTS.md)** - Comments API documentation
 - **[DATABASE_INIT.md](./DATABASE_INIT.md)** - Database initialization details
 
 ## Project Structure
@@ -135,31 +152,32 @@ See [AUTH.md](./AUTH.md) for authentication documentation and [POSTS.md](./POSTS
 learnloop-backend/
 ├── src/
 │   ├── controllers/
-│   │   ├── authController.js       # Auth logic
-│   │   ├── topicsController.js     # Topics logic
-│   │   └── postsController.js      # Posts logic
+│   │   ├── authController.js        # Auth logic
+│   │   ├── topicsController.js      # Topics logic
+│   │   ├── postsController.js       # Posts logic
+│   │   └── commentsController.js    # Comments logic
 │   ├── middleware/
-│   │   └── authMiddleware.js       # JWT verification
+│   │   └── authMiddleware.js        # JWT verification
 │   └── routes/
-│       ├── authRoutes.js           # Auth endpoints
-│       ├── topicsRoutes.js         # Topics endpoints
-│       └── postsRoutes.js          # Posts endpoints
+│       ├── authRoutes.js            # Auth endpoints
+│       ├── topicsRoutes.js          # Topics endpoints
+│       ├── postsRoutes.js           # Posts endpoints
+│       └── commentsRoutes.js        # Comments endpoints
 ├── prisma/
-│   ├── schema.prisma               # Database schema
-│   └── migrations/                 # Migration files
-├── server.js                       # Express app
-├── prisma.js                       # Database client
-├── test-auth.js                    # Auth tests
-├── test-posts.js                   # Posts tests
-└── package.json                    # Dependencies
+│   ├── schema.prisma                # Database schema
+│   └── migrations/                  # Migration files
+├── server.js                        # Express app
+├── prisma.js                        # Database client
+├── test-auth.js                     # Auth tests
+├── test-posts.js                    # Posts tests
+└── package.json                     # Dependencies
 ```
 
 ## What's Next
 
-Phase 3 is complete. Future phases will implement:
-- Comments system
-- Voting functionality (upvotes only)
-- Saved posts
+Phase 4 is complete. Future phases will implement:
+- Voting system (upvotes only on posts and comments)
+- Saved posts functionality
 - User profiles
 - Feed ranking
 - Moderation features
