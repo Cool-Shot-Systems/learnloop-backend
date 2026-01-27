@@ -12,7 +12,7 @@
     "dev": "node --watch server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx prisma generate",
-    "db:generate": "prisma generate",
+    "db:generate": "npx prisma generate",
     "db:migrate": "npx prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:validate": "node validate-db.js",
