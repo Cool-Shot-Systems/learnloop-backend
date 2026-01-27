@@ -21,12 +21,15 @@ npm install
 This will install:
 - `prisma` (dev dependency) - Prisma CLI for migrations and schema management
 - `@prisma/client` - Prisma Client for database queries
+- `pg` - PostgreSQL client for Node.js
+- `@prisma/adapter-pg` - Prisma adapter for PostgreSQL (required in Prisma 7+)
+- `dotenv` - Environment variable management
 
 ### 2. Configure Database Connection
 
-The database connection is configured in `prisma.config.ts` which reads from the `DATABASE_URL` environment variable.
+The database connection is configured via the `DATABASE_URL` environment variable.
 
-Create or edit `.env` file in the project root:
+**For local development**, create a `.env` file in the project root:
 
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/learnloop?schema=public"
@@ -38,33 +41,48 @@ Replace with your actual PostgreSQL connection string:
 - `localhost:5432` - Your PostgreSQL host and port
 - `learnloop` - Your database name
 
-### 3. Validate Schema
+**For deployment (e.g., Render)**, the `DATABASE_URL` will be automatically provided by the platform.
 
-Ensure the Prisma schema is valid:
+### 3. Validate Prisma Setup
+
+Ensure the Prisma schema is valid and Prisma Client is properly generated:
 
 ```bash
-npx prisma validate
+npm run db:validate
 ```
 
-### 4. Create Initial Migration
+This will verify:
+- Prisma Client can be imported
+- All models are accessible
+- Required methods are available
 
-Generate the first migration to create all database tables:
+### 4. Apply Database Migrations
+
+**For production/deployment:**
 
 ```bash
-npx prisma migrate dev --name init
+npm run db:migrate
 ```
 
-This will:
-- Create a new migration file in `prisma/migrations/`
-- Apply the migration to your database
-- Generate the Prisma Client
+This runs `prisma migrate deploy` which applies all pending migrations without prompting.
 
-### 5. Generate Prisma Client
-
-If you need to regenerate the Prisma Client (after schema changes):
+**For local development:**
 
 ```bash
-npx prisma generate
+npm run db:migrate:dev
+```
+
+This runs `prisma migrate dev` which:
+- Creates a new migration if schema changed
+- Applies all pending migrations
+- Regenerates Prisma Client
+
+### 5. (Optional) Generate Prisma Client
+
+If you need to regenerate the Prisma Client without running migrations:
+
+```bash
+npm run db:generate
 ```
 
 ## Database Schema Overview
@@ -101,6 +119,40 @@ npx prisma generate
    - Supports votes on posts OR comments
    - Unique constraints prevent duplicate votes
    - Only UPVOTE type in current phase
+
+## Using Prisma Client in Your Code
+
+The Prisma Client is pre-configured and ready to import. Use it in your application code:
+
+```javascript
+import prisma from './prisma.js';
+
+// Example: Fetch all users
+const users = await prisma.user.findMany();
+
+// Example: Create a new topic
+const topic = await prisma.topic.create({
+  data: {
+    name: 'Mathematics',
+    description: 'All things math related'
+  }
+});
+
+// Always disconnect when done (e.g., in cleanup handlers)
+await prisma.$disconnect();
+```
+
+**Note:** Prisma 7+ uses an adapter pattern for database connections. The `prisma.js` file in the project root is already configured with the PostgreSQL adapter.
+
+## Migration Files
+
+The initial migration has been created in `prisma/migrations/`. This migration contains:
+- All table definitions (users, topics, posts, comments, saved_posts, votes)
+- All indexes for query optimization
+- All foreign key constraints and relations
+- The VoteType enum (UPVOTE)
+
+When deploying, migrations will be automatically applied using `npm run db:migrate`.
 
 ## Useful Commands
 

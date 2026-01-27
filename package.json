@@ -5,7 +5,12 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:validate": "node validate-db.js",
+    "db:studio": "prisma studio"
   },
   "keywords": [
     "learning",
@@ -18,6 +23,9 @@
     "prisma": "^7.3.0"
   },
   "dependencies": {
-    "@prisma/client": "^7.3.0"
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+    "dotenv": "^17.2.3",
+    "pg": "^8.17.2"
   }
 }
