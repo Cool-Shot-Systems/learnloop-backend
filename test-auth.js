@@ -5,7 +5,12 @@
  * This is a simple validation script, not a comprehensive test suite.
  */
 
-import 'dotenv/config';
+// Load .env file only in local development
+if (process.env.NODE_ENV !== 'production') {
+  await import('dotenv/config').catch(() => {
+    // dotenv not available, using system environment variables
+  });
+}
 
 const API_URL = `http://localhost:${process.env.PORT || 3000}`;
 
