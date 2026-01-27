@@ -142,6 +142,17 @@ The schema enforces data integrity through:
 - **Restrict Deletes**: Cannot delete topics that have posts
 - **Indexes**: Optimized for common queries (email, username, authorId, topicId, etc.)
 
+### Important Notes on Vote Model
+
+The Vote model allows users to vote on either posts OR comments:
+- Exactly one of `postId` or `commentId` must be non-null (enforced at API layer in future phases)
+- Unique constraints prevent duplicate votes on the same post or comment
+- PostgreSQL treats NULL values as distinct, so the constraints work correctly
+
+### Prisma 7+ Configuration
+
+This project uses Prisma 7+, which has moved database connection configuration from `schema.prisma` to `prisma.config.ts`. The datasource URL is read from the `DATABASE_URL` environment variable in `prisma.config.ts`, not in the schema file.
+
 ## Next Steps
 
 Phase 1 is complete. The following are NOT implemented yet:
