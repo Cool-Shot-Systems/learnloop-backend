@@ -14,7 +14,7 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 - **ORM**: Prisma
 - **Auth**: Email + password with JWT
 
-## Current Status: Phase 7 Complete ✅
+## Current Status: Phase 8 Complete ✅
 
 ### Phase 1: Database Design ✅
 - ✅ Database schema design
@@ -67,13 +67,24 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 - ✅ Clear 429 responses with retry-after headers
 - ✅ No limits on read-only endpoints
 
+### Phase 8: Moderation and Quality Control ✅
+- ✅ Content reporting system (posts and comments)
+- ✅ Auto-hide at 5 reports threshold
+- ✅ Admin review endpoints
+- ✅ Report management (list, view details, unhide, dismiss)
+- ✅ Visibility rules (authors and admins see hidden content)
+- ✅ Prevent duplicate reports and self-reporting
+- ✅ Report rate limiting (10/hour)
+- ✅ Transaction-safe auto-hiding
+
 ### Database Models
-1. **User** - User accounts with UUID, email, username, and learning score
+1. **User** - User accounts with UUID, email, username, learning score, and admin flag
 2. **Topic** - Subject categories for organizing posts
-3. **Post** - User-generated learning content with soft delete support
-4. **Comment** - User comments on posts
+3. **Post** - User-generated learning content with soft delete and hiding support
+4. **Comment** - User comments on posts with hiding support
 5. **SavedPost** - User bookmarks with composite primary key
 6. **Vote** - Upvote-only system for posts and comments
+7. **Report** - Content moderation reports with reason and auto-hide logic
 
 ## Quick Start
 
@@ -176,7 +187,20 @@ GET    /api/saved-posts/check/:postId (optional auth)
 DELETE /api/saved-posts/:postId (auth required)
 ```
 
-See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, [COMMENTS.md](./COMMENTS.md) for comments, [VOTES.md](./VOTES.md) for votes, [SAVED_POSTS.md](./SAVED_POSTS.md) for saved posts, and [RATE_LIMITING.md](./RATE_LIMITING.md) for rate limiting documentation.
+### Reports (Moderation)
+```
+POST   /api/reports (auth required)
+```
+
+### Admin (Moderation)
+```
+GET    /api/admin/reports (admin only)
+GET    /api/admin/reports/:id (admin only)
+POST   /api/admin/reports/:id/unhide (admin only)
+POST   /api/admin/reports/:id/dismiss (admin only)
+```
+
+See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, [COMMENTS.md](./COMMENTS.md) for comments, [VOTES.md](./VOTES.md) for votes, [SAVED_POSTS.md](./SAVED_POSTS.md) for saved posts, [RATE_LIMITING.md](./RATE_LIMITING.md) for rate limiting, and [MODERATION.md](./MODERATION.md) for moderation documentation.
 
 ## Documentation
 
@@ -187,6 +211,7 @@ See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, [
 - **[VOTES.md](./VOTES.md)** - Votes and Learning Score API documentation
 - **[SAVED_POSTS.md](./SAVED_POSTS.md)** - Saved Posts (Bookmarks) API documentation
 - **[RATE_LIMITING.md](./RATE_LIMITING.md)** - Rate Limiting and Abuse Protection
+- **[MODERATION.md](./MODERATION.md)** - Moderation and Quality Control
 - **[DATABASE_INIT.md](./DATABASE_INIT.md)** - Database initialization details
 
 ## Project Structure
