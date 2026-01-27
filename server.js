@@ -15,6 +15,7 @@ import votesRoutes from './src/routes/votesRoutes.js';
 import savedPostsRoutes from './src/routes/savedPostsRoutes.js';
 import reportsRoutes from './src/routes/reportsRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
+import feedRoutes from './src/routes/feedRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,7 +29,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     message: 'LearnLoop Backend is running',
-    phase: 'Phase 8: Moderation and Quality Control',
+    phase: 'Phase 9: Feed and Discovery',
     timestamp: new Date().toISOString()
   });
 });
@@ -42,6 +43,7 @@ app.use('/api/votes', votesRoutes);
 app.use('/api/saved-posts', savedPostsRoutes);
 app.use('/api/reports', reportsRoutes); // Phase 8
 app.use('/api/admin', adminRoutes); // Phase 8
+app.use('/api/feed', feedRoutes); // Phase 9
 
 // 404 handler
 app.use((req, res) => {
@@ -63,7 +65,7 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 LearnLoop Backend running on port ${PORT}`);
-  console.log(`📚 Phase 7: Rate Limiting and Abuse Protection`);
+  console.log(`📚 Phase 9: Feed and Discovery`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
   console.log(`\n🔐 Auth endpoints:`);
   console.log(`   POST /api/auth/register`);
@@ -96,6 +98,16 @@ app.listen(PORT, () => {
   console.log(`   GET    /api/saved-posts (auth required)`);
   console.log(`   GET    /api/saved-posts/check/:postId (optional auth)`);
   console.log(`   DELETE /api/saved-posts/:postId (auth required)`);
+  console.log(`\n🚨 Moderation endpoints:`);
+  console.log(`   POST   /api/reports (auth required)`);
+  console.log(`   GET    /api/admin/reports (admin only)`);
+  console.log(`   GET    /api/admin/reports/:id (admin only)`);
+  console.log(`   POST   /api/admin/reports/:id/unhide (admin only)`);
+  console.log(`   POST   /api/admin/reports/:id/dismiss (admin only)`);
+  console.log(`\n📰 Feed endpoints:`);
+  console.log(`   GET    /api/feed/home (optional auth)`);
+  console.log(`   GET    /api/feed/topic/:topicId (optional auth)`);
+  console.log(`   GET    /api/feed/author/:authorId (optional auth)`);
 });
 
 export default app;
