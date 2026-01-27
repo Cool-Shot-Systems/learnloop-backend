@@ -14,7 +14,7 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 - **ORM**: Prisma
 - **Auth**: Email + password with JWT
 
-## Current Status: Phase 8 Complete ✅
+## Current Status: Phase 9 Complete ✅
 
 ### Phase 1: Database Design ✅
 - ✅ Database schema design
@@ -76,6 +76,16 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 - ✅ Prevent duplicate reports and self-reporting
 - ✅ Report rate limiting (10/hour)
 - ✅ Transaction-safe auto-hiding
+
+### Phase 9: Feed and Discovery ✅
+- ✅ Home feed - all posts with transparent ordering
+- ✅ Topic feed - filtered by topic
+- ✅ Author feed - filtered by author (hidden posts visible to author/admin)
+- ✅ Simple ordering: createdAt DESC, then voteCount DESC
+- ✅ No personalization or AI ranking
+- ✅ Optional auth for hasVoted/isSaved enrichment
+- ✅ Pagination support (limit, offset)
+- ✅ Respects moderation visibility rules
 
 ### Database Models
 1. **User** - User accounts with UUID, email, username, learning score, and admin flag
@@ -200,7 +210,14 @@ POST   /api/admin/reports/:id/unhide (admin only)
 POST   /api/admin/reports/:id/dismiss (admin only)
 ```
 
-See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, [COMMENTS.md](./COMMENTS.md) for comments, [VOTES.md](./VOTES.md) for votes, [SAVED_POSTS.md](./SAVED_POSTS.md) for saved posts, [RATE_LIMITING.md](./RATE_LIMITING.md) for rate limiting, and [MODERATION.md](./MODERATION.md) for moderation documentation.
+### Feeds
+```
+GET    /api/feed/home (optional auth)
+GET    /api/feed/topic/:topicId (optional auth)
+GET    /api/feed/author/:authorId (optional auth)
+```
+
+See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, [COMMENTS.md](./COMMENTS.md) for comments, [VOTES.md](./VOTES.md) for votes, [SAVED_POSTS.md](./SAVED_POSTS.md) for saved posts, [RATE_LIMITING.md](./RATE_LIMITING.md) for rate limiting, [MODERATION.md](./MODERATION.md) for moderation, and [FEEDS.md](./FEEDS.md) for feed documentation.
 
 ## Documentation
 
@@ -212,6 +229,7 @@ See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, [
 - **[SAVED_POSTS.md](./SAVED_POSTS.md)** - Saved Posts (Bookmarks) API documentation
 - **[RATE_LIMITING.md](./RATE_LIMITING.md)** - Rate Limiting and Abuse Protection
 - **[MODERATION.md](./MODERATION.md)** - Moderation and Quality Control
+- **[FEEDS.md](./FEEDS.md)** - Feed and Discovery API documentation
 - **[DATABASE_INIT.md](./DATABASE_INIT.md)** - Database initialization details
 
 ## Project Structure
@@ -225,17 +243,26 @@ learnloop-backend/
 │   │   ├── postsController.js       # Posts logic
 │   │   ├── commentsController.js    # Comments logic
 │   │   ├── votesController.js       # Votes logic
-│   │   └── savedPostsController.js  # Saved Posts logic
+│   │   ├── savedPostsController.js  # Saved Posts logic
+│   │   ├── reportsController.js     # Reports logic
+│   │   ├── adminController.js       # Admin moderation logic
+│   │   └── feedController.js        # Feed logic
 │   ├── middleware/
 │   │   ├── authMiddleware.js        # JWT verification
+│   │   ├── adminMiddleware.js       # Admin verification
 │   │   └── rateLimiters.js          # Rate limiting
+│   ├── utils/
+│   │   └── moderationUtils.js       # Moderation helpers
 │   └── routes/
 │       ├── authRoutes.js            # Auth endpoints
 │       ├── topicsRoutes.js          # Topics endpoints
 │       ├── postsRoutes.js           # Posts endpoints
 │       ├── commentsRoutes.js        # Comments endpoints
 │       ├── votesRoutes.js           # Votes endpoints
-│       └── savedPostsRoutes.js      # Saved Posts endpoints
+│       ├── savedPostsRoutes.js      # Saved Posts endpoints
+│       ├── reportsRoutes.js         # Reports endpoints
+│       ├── adminRoutes.js           # Admin endpoints
+│       └── feedRoutes.js            # Feed endpoints
 ├── prisma/
 │   ├── schema.prisma                # Database schema
 │   └── migrations/                  # Migration files
