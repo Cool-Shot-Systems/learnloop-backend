@@ -55,14 +55,12 @@ export async function createComment(req, res) {
     }
 
     // Check if post exists and is not deleted
-    const post = await prisma.post.findFirst({
-      where: {
-        id: parsedPostId,
-        deletedAt: null
-      }
+    const post = await prisma.post.findUnique({
+      where: { id: parsedPostId },
+      select: { deletedAt: true }
     });
 
-    if (!post) {
+    if (!post || post.deletedAt !== null) {
       return res.status(404).json({
         error: 'Post not found'
       });
@@ -125,14 +123,12 @@ export async function listCommentsForPost(req, res) {
     const parsedOffset = Math.max(parseInt(offset, 10) || 0, 0);
 
     // Check if post exists and is not deleted
-    const post = await prisma.post.findFirst({
-      where: {
-        id: parsedPostId,
-        deletedAt: null
-      }
+    const post = await prisma.post.findUnique({
+      where: { id: parsedPostId },
+      select: { deletedAt: true }
     });
 
-    if (!post) {
+    if (!post || post.deletedAt !== null) {
       return res.status(404).json({
         error: 'Post not found'
       });
