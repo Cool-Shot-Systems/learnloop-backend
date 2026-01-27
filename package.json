@@ -5,15 +5,15 @@
   "type": "module",
   "main": "index.js",
   "engines": {
-    "node": ">=18.0.0 <19.0.0"
+    "node": ">=20.0.0 <21.0.0"
   },
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "prisma generate",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate deploy",
+    "build": "npx prisma generate",
+    "db:generate": "npx prisma generate",
+    "db:migrate": "npx prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:validate": "node validate-db.js",
     "db:studio": "prisma studio"
@@ -29,13 +29,13 @@
     "dotenv": "^17.2.3"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.3.0",
-    "@prisma/client": "^7.3.0",
+    "@prisma/adapter-pg": "^6.19.2",
+    "@prisma/client": "^6.19.2",
     "bcrypt": "^6.0.0",
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.17.2",
-    "prisma": "^7.3.0"
+    "prisma": "^6.19.2"
   }
 }
