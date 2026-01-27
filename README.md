@@ -9,17 +9,25 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 ## Tech Stack
 
 - **Runtime**: Node.js (ES Modules)
-- **Framework**: Express (to be added in Phase 2)
+- **Framework**: Express
 - **Database**: PostgreSQL
 - **ORM**: Prisma
-- **Auth**: Email + password with JWT (to be added in Phase 2)
+- **Auth**: Email + password with JWT
 
-## Current Status: Phase 1 Complete ✅
+## Current Status: Phase 2 Complete ✅
 
-### Implemented
+### Phase 1: Database Design ✅
 - ✅ Database schema design
 - ✅ Prisma ORM setup
 - ✅ All data models with proper relations, constraints, and indexes
+- ✅ Migration files ready for deployment
+
+### Phase 2: Authentication ✅
+- ✅ User registration with validation
+- ✅ User login with JWT tokens
+- ✅ Password hashing with bcrypt
+- ✅ Auth middleware for protected routes
+- ✅ Authorization helpers
 
 ### Database Models
 1. **User** - User accounts with UUID, email, username, and learning score
@@ -29,49 +37,96 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 5. **SavedPost** - User bookmarks with composite primary key
 6. **Vote** - Upvote-only system for posts and comments
 
-See [SETUP.md](./SETUP.md) for detailed setup instructions and database schema documentation.
+## Quick Start
 
-## Getting Started
+### 1. Install Dependencies
+```bash
+npm install
+```
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+### 2. Configure Environment
+Copy `.env.example` to `.env` and configure:
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/learnloop?schema=public"
+JWT_SECRET="your-secret-key-here"
+JWT_EXPIRES_IN="7d"
+PORT=3000
+```
 
-2. Configure your database connection in `.env`:
-   ```env
-   DATABASE_URL="postgresql://username:password@localhost:5432/learnloop?schema=public"
-   ```
+### 3. Setup Database
+```bash
+# Run migrations
+npm run db:migrate:dev
 
-3. Run migrations to create the database schema:
-   ```bash
-   npx prisma migrate dev --name init
-   ```
+# Or for production
+npm run db:migrate
+```
 
-4. (Optional) Open Prisma Studio to view the database:
-   ```bash
-   npx prisma studio
-   ```
+### 4. Start Server
+```bash
+# Development (with auto-restart)
+npm run dev
 
-## What's Next
+# Production
+npm start
+```
 
-Phase 1 is complete. Future phases will implement:
-- API routes and controllers
-- Authentication middleware
-- Business logic for content validation
-- Frontend/UI
+### 5. Test Authentication
+```bash
+# In another terminal
+node test-auth.js
+```
+
+## API Endpoints
+
+### Health Check
+```
+GET /health
+```
+
+### Authentication
+```
+POST /api/auth/register
+POST /api/auth/login
+```
+
+See [AUTH.md](./AUTH.md) for detailed authentication documentation.
+
+## Documentation
+
+- **[SETUP.md](./SETUP.md)** - Database setup and Prisma configuration
+- **[AUTH.md](./AUTH.md)** - Authentication and authorization guide
+- **[DATABASE_INIT.md](./DATABASE_INIT.md)** - Database initialization details
 
 ## Project Structure
 
 ```
 learnloop-backend/
+├── src/
+│   ├── controllers/
+│   │   └── authController.js      # Auth logic
+│   ├── middleware/
+│   │   └── authMiddleware.js      # JWT verification
+│   └── routes/
+│       └── authRoutes.js          # Auth endpoints
 ├── prisma/
-│   └── schema.prisma      # Database schema definition
-├── prisma.config.ts       # Prisma configuration
-├── package.json           # Node.js dependencies
-├── SETUP.md              # Detailed setup instructions
-└── README.md             # This file
+│   ├── schema.prisma              # Database schema
+│   └── migrations/                # Migration files
+├── server.js                      # Express app
+├── prisma.js                      # Database client
+├── test-auth.js                   # Auth tests
+└── package.json                   # Dependencies
 ```
+
+## What's Next
+
+Phase 2 is complete. Future phases will implement:
+- Posts and content creation
+- Comments system
+- Topics management
+- Voting functionality
+- Saved posts
+- User profiles
 
 ## License
 
