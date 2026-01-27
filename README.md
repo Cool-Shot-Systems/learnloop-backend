@@ -14,7 +14,7 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 - **ORM**: Prisma
 - **Auth**: Email + password with JWT
 
-## Current Status: Phase 5 Complete ✅
+## Current Status: Phase 6 Complete ✅
 
 ### Phase 1: Database Design ✅
 - ✅ Database schema design
@@ -49,6 +49,13 @@ This platform is intentionally human-first and does NOT use AI to generate, sugg
 - ✅ Learning score auto-updates (+1 on upvote, -1 on removal)
 - ✅ Transaction-based score consistency
 - ✅ Vote count API with optional auth
+
+### Phase 6: Saved Posts ✅
+- ✅ Save/unsave posts for later review
+- ✅ List saved posts with pagination
+- ✅ Check if post is saved (optional auth)
+- ✅ Duplicate save prevention
+- ✅ Idempotent unsave operation
 
 ### Database Models
 1. **User** - User accounts with UUID, email, username, and learning score
@@ -151,7 +158,15 @@ GET    /api/votes/posts/:id (optional auth)
 GET    /api/votes/comments/:id (optional auth)
 ```
 
-See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, [COMMENTS.md](./COMMENTS.md) for comments, and [VOTES.md](./VOTES.md) for votes documentation.
+### Saved Posts
+```
+POST   /api/saved-posts (auth required)
+GET    /api/saved-posts (auth required)
+GET    /api/saved-posts/check/:postId (optional auth)
+DELETE /api/saved-posts/:postId (auth required)
+```
+
+See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, [COMMENTS.md](./COMMENTS.md) for comments, [VOTES.md](./VOTES.md) for votes, and [SAVED_POSTS.md](./SAVED_POSTS.md) for saved posts documentation.
 
 ## Documentation
 
@@ -160,6 +175,7 @@ See [AUTH.md](./AUTH.md) for authentication, [POSTS.md](./POSTS.md) for posts, [
 - **[POSTS.md](./POSTS.md)** - Topics and Posts API documentation
 - **[COMMENTS.md](./COMMENTS.md)** - Comments API documentation
 - **[VOTES.md](./VOTES.md)** - Votes and Learning Score API documentation
+- **[SAVED_POSTS.md](./SAVED_POSTS.md)** - Saved Posts (Bookmarks) API documentation
 - **[DATABASE_INIT.md](./DATABASE_INIT.md)** - Database initialization details
 
 ## Project Structure
@@ -172,7 +188,8 @@ learnloop-backend/
 │   │   ├── topicsController.js      # Topics logic
 │   │   ├── postsController.js       # Posts logic
 │   │   ├── commentsController.js    # Comments logic
-│   │   └── votesController.js       # Votes logic
+│   │   ├── votesController.js       # Votes logic
+│   │   └── savedPostsController.js  # Saved Posts logic
 │   ├── middleware/
 │   │   └── authMiddleware.js        # JWT verification
 │   └── routes/
@@ -180,7 +197,8 @@ learnloop-backend/
 │       ├── topicsRoutes.js          # Topics endpoints
 │       ├── postsRoutes.js           # Posts endpoints
 │       ├── commentsRoutes.js        # Comments endpoints
-│       └── votesRoutes.js           # Votes endpoints
+│       ├── votesRoutes.js           # Votes endpoints
+│       └── savedPostsRoutes.js      # Saved Posts endpoints
 ├── prisma/
 │   ├── schema.prisma                # Database schema
 │   └── migrations/                  # Migration files
@@ -193,13 +211,13 @@ learnloop-backend/
 
 ## What's Next
 
-Phase 5 is complete. Future phases will implement:
-- Saved posts functionality
+Phase 6 is complete. Future phases will implement:
 - User profiles with learning score display
 - Feed ranking based on votes
 - Leaderboards
 - Moderation features
 - Admin tools
+- Topic management (admin-only)
 
 ## License
 
