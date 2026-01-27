@@ -1,0 +1,167 @@
+// LearnLoop Backend - Prisma Schema
+// A human-first learning social app for students
+// Phase 1: Database design only (no routes, controllers, or auth yet)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ====================
+// USER MODEL
+// ====================
+// Stores user accounts with authentication and gamification
+// - UUID for better security and scalability
+// - learningScore tracks user engagement and quality contributions
+model User {
+  id             String   @id @default(uuid()) @db.Uuid
+  email          String   @unique
+  username       String   @unique
+  hashedPassword String
+  learningScore  Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  // Relations
+  posts      Post[]
+  comments   Comment[]
+  savedPosts SavedPost[]
+  votes      Vote[]
+
+  @@index([email])
+  @@index([username])
+  @@map("users")
+}
+
+// ====================
+// TOPIC MODEL
+// ====================
+// Categorizes posts by subject area
+// - Each post must have exactly ONE primary topic
+// - Topics are predefined to ensure consistency
+model Topic {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  posts Post[]
+
+  @@index([name])
+  @@map("topics")
+}
+
+// ====================
+// POST MODEL
+// ====================
+// User-generated learning content
+// - Soft delete support via deletedAt field
+// - Title limited to 60 chars (enforced at API layer)
+// - Content 80-220 words (enforced at API layer)
+// - Exactly ONE primary topic per post
+model Post {
+  id             Int       @id @default(autoincrement())
+  title          String    @db.VarChar(60)
+  content        String    @db.Text
+  authorId       String    @db.Uuid
+  primaryTopicId Int
+  createdAt      DateTime  @default(now())
+  deletedAt      DateTime? // Soft delete support
+
+  // Relations
+  author       User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  primaryTopic Topic       @relation(fields: [primaryTopicId], references: [id], onDelete: Restrict)
+  comments     Comment[]
+  savedBy      SavedPost[]
+  votes        Vote[]
+
+  @@index([authorId])
+  @@index([primaryTopicId])
+  @@index([createdAt])
+  @@index([deletedAt]) // For efficient filtering of deleted posts
+  @@map("posts")
+}
+
+// ====================
+// COMMENT MODEL
+// ====================
+// User comments on posts
+// - Minimum 20 characters (enforced at API layer)
+// - No nesting/threading in Phase 1
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  authorId  String   @db.Uuid
+  postId    Int
+  createdAt DateTime @default(now())
+
+  // Relations
+  author User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  votes  Vote[]
+
+  @@index([authorId])
+  @@index([postId])
+  @@index([createdAt])
+  @@map("comments")
+}
+
+// ====================
+// SAVEDPOST MODEL
+// ====================
+// Allows users to save/bookmark posts
+// - Composite primary key prevents duplicate saves
+model SavedPost {
+  userId  String   @db.Uuid
+  postId  Int
+  savedAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([userId, postId])
+  @@index([userId])
+  @@index([postId])
+  @@map("saved_posts")
+}
+
+// ====================
+// VOTE MODEL
+// ====================
+// Upvote-only system for posts and comments
+// - Users can vote on either a post OR a comment (not both)
+// - Unique constraints prevent duplicate votes on posts and comments separately
+// - type field is enum with only "UPVOTE" to support future vote types if needed
+model Vote {
+  id        Int      @id @default(autoincrement())
+  userId    String   @db.Uuid
+  postId    Int?
+  commentId Int?
+  type      VoteType @default(UPVOTE)
+  votedAt   DateTime @default(now())
+
+  // Relations
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  // Prevent duplicate votes on posts
+  @@unique([userId, postId])
+  // Prevent duplicate votes on comments
+  @@unique([userId, commentId])
+  @@index([userId])
+  @@index([postId])
+  @@index([commentId])
+  @@map("votes")
+}
+
+// ====================
+// ENUMS
+// ====================
+enum VoteType {
+  UPVOTE
+}

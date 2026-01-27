@@ -1,0 +1,177 @@
+# LearnLoop Backend - Setup Instructions
+
+## Phase 1: Database Design and Prisma Setup
+
+This document provides instructions for setting up the database using Prisma ORM with PostgreSQL.
+
+## Prerequisites
+
+- Node.js (v18 or higher recommended)
+- PostgreSQL database (local or cloud)
+- npm or yarn package manager
+
+## Installation Steps
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+This will install:
+- `prisma` (dev dependency) - Prisma CLI for migrations and schema management
+- `@prisma/client` - Prisma Client for database queries
+
+### 2. Configure Database Connection
+
+The database connection is configured in `prisma.config.ts` which reads from the `DATABASE_URL` environment variable.
+
+Create or edit `.env` file in the project root:
+
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/learnloop?schema=public"
+```
+
+Replace with your actual PostgreSQL connection string:
+- `username` - Your PostgreSQL username
+- `password` - Your PostgreSQL password
+- `localhost:5432` - Your PostgreSQL host and port
+- `learnloop` - Your database name
+
+### 3. Validate Schema
+
+Ensure the Prisma schema is valid:
+
+```bash
+npx prisma validate
+```
+
+### 4. Create Initial Migration
+
+Generate the first migration to create all database tables:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+This will:
+- Create a new migration file in `prisma/migrations/`
+- Apply the migration to your database
+- Generate the Prisma Client
+
+### 5. Generate Prisma Client
+
+If you need to regenerate the Prisma Client (after schema changes):
+
+```bash
+npx prisma generate
+```
+
+## Database Schema Overview
+
+### Models
+
+1. **User** - User accounts with authentication
+   - UUID primary key for security
+   - Unique email and username
+   - Learning score for gamification
+   - Relations: posts, comments, savedPosts, votes
+
+2. **Topic** - Subject categories for posts
+   - Auto-incrementing integer ID
+   - Unique name constraint
+   - Relations: posts
+
+3. **Post** - User-generated learning content
+   - Title (max 60 characters)
+   - Content (80-220 words enforced at API layer)
+   - Soft delete support via `deletedAt` field
+   - Exactly ONE primary topic
+   - Relations: author, primaryTopic, comments, savedBy, votes
+
+4. **Comment** - User comments on posts
+   - Minimum 20 characters (enforced at API layer)
+   - Relations: author, post, votes
+
+5. **SavedPost** - User bookmarks
+   - Composite primary key (userId, postId)
+   - Prevents duplicate saves
+
+6. **Vote** - Upvote system
+   - Supports votes on posts OR comments
+   - Unique constraints prevent duplicate votes
+   - Only UPVOTE type in current phase
+
+## Useful Commands
+
+### View Database in Prisma Studio
+
+```bash
+npx prisma studio
+```
+
+Opens a web interface to view and edit database data.
+
+### Reset Database
+
+**WARNING: This will delete all data!**
+
+```bash
+npx prisma migrate reset
+```
+
+### Check Migration Status
+
+```bash
+npx prisma migrate status
+```
+
+### Format Schema File
+
+```bash
+npx prisma format
+```
+
+## Database Constraints
+
+The schema enforces data integrity through:
+
+- **Foreign Keys**: All relations use proper FK constraints
+- **Unique Constraints**: Prevent duplicate emails, usernames, topic names, and votes
+- **Cascade Deletes**: User deletion cascades to their posts, comments, votes, and saves
+- **Restrict Deletes**: Cannot delete topics that have posts
+- **Indexes**: Optimized for common queries (email, username, authorId, topicId, etc.)
+
+## Next Steps
+
+Phase 1 is complete. The following are NOT implemented yet:
+- API routes and controllers
+- Authentication middleware
+- Business logic for content validation (word count, character limits)
+- Frontend/UI
+
+These will be addressed in future phases.
+
+## Troubleshooting
+
+### Migration Issues
+
+If migrations fail:
+1. Check your database connection string in `.env`
+2. Ensure PostgreSQL is running
+3. Verify database user has proper permissions
+4. Check migration logs in `prisma/migrations/`
+
+### Schema Changes
+
+After modifying `prisma/schema.prisma`:
+1. Run `npx prisma format` to validate
+2. Run `npx prisma migrate dev --name descriptive_name` to create migration
+3. Migration will automatically regenerate Prisma Client
+
+## Notes
+
+- This is a Phase 1 implementation focusing on database design only
+- Content validation (word counts, character limits) will be enforced at the API layer in future phases
+- The platform intentionally does NOT use AI for content generation or assistance
+- All rules are enforced at database and API level, not just frontend

@@ -1,0 +1,23 @@
+{
+  "name": "learnloop-backend",
+  "version": "1.0.0",
+  "description": "Backend for LearnLoop - A human-first learning social app",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "learning",
+    "social",
+    "education"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prisma": "^7.3.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.3.0"
+  }
+}
