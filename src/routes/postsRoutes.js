@@ -3,6 +3,7 @@
  * 
  * CRUD endpoints for posts with authentication.
  * Phase 3: Posts only (no comments, votes, or saves yet).
+ * Phase 4: Added comments listing endpoint.
  */
 
 import express from 'express';
@@ -16,6 +17,7 @@ import {
   updatePost,
   deletePost
 } from '../controllers/postsController.js';
+import { listCommentsForPost } from '../controllers/commentsController.js';
 
 const router = express.Router();
 
@@ -84,6 +86,23 @@ router.get('/topic/:topicId', getPostsByTopic);
  * - 404: Author not found
  */
 router.get('/author/:authorId', getPostsByAuthor);
+
+/**
+ * GET /api/posts/:postId/comments
+ * List comments for a post
+ * 
+ * Params:
+ * - postId: Post ID (number)
+ * 
+ * Query params:
+ * - limit: Number of comments (default: 50, max: 100)
+ * - offset: Pagination offset (default: 0)
+ * 
+ * Response:
+ * - 200: Array of comments for the post (ordered oldest first)
+ * - 404: Post not found
+ */
+router.get('/:postId/comments', listCommentsForPost);
 
 /**
  * GET /api/posts/:id

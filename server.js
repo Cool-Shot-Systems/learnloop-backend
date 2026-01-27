@@ -1,7 +1,7 @@
 /**
  * LearnLoop Backend Server
  * 
- * Phase 3: Topics and Posts
+ * Phase 4: Comments
  * A human-first learning social app for students.
  */
 
@@ -10,6 +10,7 @@ import express from 'express';
 import authRoutes from './src/routes/authRoutes.js';
 import topicsRoutes from './src/routes/topicsRoutes.js';
 import postsRoutes from './src/routes/postsRoutes.js';
+import commentsRoutes from './src/routes/commentsRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,7 +24,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     message: 'LearnLoop Backend is running',
-    phase: 'Phase 3: Topics and Posts',
+    phase: 'Phase 4: Comments',
     timestamp: new Date().toISOString()
   });
 });
@@ -32,6 +33,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/topics', topicsRoutes);
 app.use('/api/posts', postsRoutes);
+app.use('/api/comments', commentsRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -53,7 +55,7 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 LearnLoop Backend running on port ${PORT}`);
-  console.log(`📚 Phase 3: Topics and Posts`);
+  console.log(`📚 Phase 4: Comments`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
   console.log(`\n🔐 Auth endpoints:`);
   console.log(`   POST /api/auth/register`);
@@ -66,10 +68,16 @@ app.listen(PORT, () => {
   console.log(`   POST   /api/posts (auth required)`);
   console.log(`   GET    /api/posts`);
   console.log(`   GET    /api/posts/:id`);
+  console.log(`   GET    /api/posts/:postId/comments`);
   console.log(`   GET    /api/posts/topic/:topicId`);
   console.log(`   GET    /api/posts/author/:authorId`);
   console.log(`   PUT    /api/posts/:id (auth required)`);
   console.log(`   DELETE /api/posts/:id (auth required)`);
+  console.log(`\n💬 Comments endpoints:`);
+  console.log(`   POST   /api/comments (auth required)`);
+  console.log(`   GET    /api/comments/:id`);
+  console.log(`   PUT    /api/comments/:id (auth required)`);
+  console.log(`   DELETE /api/comments/:id (auth required)`);
 });
 
 export default app;
