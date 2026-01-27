@@ -21,9 +21,14 @@ export const savePost = async (req, res) => {
       return res.status(400).json({ error: 'Post ID is required' });
     }
 
+    const parsedPostId = parseInt(postId);
+    if (isNaN(parsedPostId)) {
+      return res.status(400).json({ error: 'Invalid post ID' });
+    }
+
     // Verify post exists and is not deleted
     const post = await prisma.post.findUnique({
-      where: { id: parseInt(postId) }
+      where: { id: parsedPostId }
     });
 
     if (!post) {
@@ -39,7 +44,7 @@ export const savePost = async (req, res) => {
       where: {
         userId_postId: {
           userId,
-          postId: parseInt(postId)
+          postId: parsedPostId
         }
       }
     });
@@ -55,7 +60,7 @@ export const savePost = async (req, res) => {
     const savedPost = await prisma.savedPost.create({
       data: {
         userId,
-        postId: parseInt(postId)
+        postId: parsedPostId
       },
       include: {
         post: {
@@ -96,7 +101,8 @@ export const unsavePost = async (req, res) => {
     const userId = req.user.id;
 
     // Validate input
-    if (!postId || isNaN(postId)) {
+    const parsedPostId = parseInt(postId);
+    if (isNaN(parsedPostId)) {
       return res.status(400).json({ error: 'Invalid post ID' });
     }
 
@@ -104,7 +110,7 @@ export const unsavePost = async (req, res) => {
     const deleted = await prisma.savedPost.deleteMany({
       where: {
         userId,
-        postId: parseInt(postId)
+        postId: parsedPostId
       }
     });
 
@@ -206,7 +212,8 @@ export const checkIfSaved = async (req, res) => {
     const { postId } = req.params;
 
     // Validate input
-    if (!postId || isNaN(postId)) {
+    const parsedPostId = parseInt(postId);
+    if (isNaN(parsedPostId)) {
       return res.status(400).json({ error: 'Invalid post ID' });
     }
 
@@ -214,7 +221,7 @@ export const checkIfSaved = async (req, res) => {
     if (!req.user) {
       return res.status(200).json({ 
         isSaved: false,
-        postId: parseInt(postId)
+        postId: parsedPostId
       });
     }
 
@@ -225,14 +232,14 @@ export const checkIfSaved = async (req, res) => {
       where: {
         userId_postId: {
           userId,
-          postId: parseInt(postId)
+          postId: parsedPostId
         }
       }
     });
 
     res.status(200).json({ 
       isSaved: !!savedPost,
-      postId: parseInt(postId),
+      postId: parsedPostId,
       savedAt: savedPost?.savedAt || null
     });
   } catch (error) {
