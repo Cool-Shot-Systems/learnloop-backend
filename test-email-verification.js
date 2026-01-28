@@ -51,15 +51,15 @@ async function testRegistrationWithVerification() {
 
     const data = await response.json();
 
-    if (response.status === 201 && data.user && data.user.isVerified === false) {
+    if (response.status === 201 && data.user && data.user.emailVerified === false) {
       logSuccess('Registration creates unverified user');
       log('Response:', data);
       
-      // Check message mentions email verification
-      if (data.message.toLowerCase().includes('verify')) {
-        logSuccess('Registration response mentions email verification');
+      // Check message is the new required message
+      if (data.message === 'Verification email sent. Please check your inbox.') {
+        logSuccess('Registration response has correct message');
       } else {
-        logError('Registration response should mention email verification');
+        logError('Registration response should be: "Verification email sent. Please check your inbox."');
       }
       
       return true;
@@ -73,7 +73,7 @@ async function testRegistrationWithVerification() {
   }
 }
 
-// Test login with unverified account
+// Test login with unverified account (should be blocked)
 async function testLoginUnverified() {
   console.log('\n🔑 Testing Login with Unverified Account...\n');
 
@@ -89,12 +89,12 @@ async function testLoginUnverified() {
 
     const data = await response.json();
 
-    if (response.status === 200 && data.token && data.user.isVerified === false) {
-      logSuccess('Unverified users can login (but cannot perform write actions)');
-      log('User data:', data.user);
-      return data.token;
+    if (response.status === 403 && data.error.toLowerCase().includes('verify')) {
+      logSuccess('Unverified users cannot login');
+      log('Error message:', data.error);
+      return null;
     } else {
-      logError('Login should work for unverified users', data);
+      logError('Login should be blocked for unverified users', data);
       return null;
     }
   } catch (error) {
@@ -283,13 +283,7 @@ async function runTests() {
     process.exit(1);
   }
 
-  const token = await testLoginUnverified();
-  if (!token) {
-    console.error('\n❌ Login test failed, stopping tests');
-    process.exit(1);
-  }
-
-  await testUnverifiedWriteBlocked(token);
+  await testLoginUnverified(); // Should be blocked now
   await testVerificationMissingToken();
   await testVerificationInvalidToken();
   await testResendVerificationEmail();
