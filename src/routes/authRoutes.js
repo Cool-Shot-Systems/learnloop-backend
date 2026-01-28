@@ -49,11 +49,12 @@ router.post('/login', authLimiter, login);
 
 /**
  * POST /api/auth/verify-email
+ * GET /api/auth/verify-email?token=xxx
  * Verify user email with token
  * 
  * Rate limit: 5 requests per 15 minutes (IP-based)
  * 
- * Body:
+ * Body (POST) or Query (GET):
  * - token: string (verification token from email)
  * 
  * Response:
@@ -62,6 +63,7 @@ router.post('/login', authLimiter, login);
  * - 429: Too many requests
  */
 router.post('/verify-email', authLimiter, verifyEmail);
+router.get('/verify-email', authLimiter, verifyEmail);
 
 /**
  * POST /api/auth/resend-verification
