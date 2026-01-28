@@ -18,6 +18,8 @@ import savedPostsRoutes from './src/routes/savedPostsRoutes.js';
 import reportsRoutes from './src/routes/reportsRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
 import feedRoutes from './src/routes/feedRoutes.js';
+import contactRoutes from './src/routes/contactRoutes.js';
+import { bootstrapSystemUsers } from './src/bootstrap.js';
 
 const app = express();
 
@@ -120,6 +122,7 @@ app.use('/api/saved-posts', savedPostsRoutes);
 app.use('/api/reports', reportsRoutes); // Phase 8
 app.use('/api/admin', adminRoutes); // Phase 8
 app.use('/api/feed', feedRoutes); // Phase 9
+app.use('/api/contact', contactRoutes); // Contact form
 
 // 404 handler
 app.use((req, res) => {
@@ -139,10 +142,13 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 LearnLoop Backend running on port ${PORT}`);
   console.log(`📚 Phase 9: Feed and Discovery`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  
+  // Bootstrap system users
+  await bootstrapSystemUsers();
   console.log(`\n🔐 Auth endpoints:`);
   console.log(`   POST /api/auth/register`);
   console.log(`   POST /api/auth/login`);

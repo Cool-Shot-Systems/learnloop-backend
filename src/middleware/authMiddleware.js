@@ -68,6 +68,7 @@ export async function requireAuth(req, res, next) {
         email: true,
         username: true,
         learningScore: true,
+        role: true,
         isAdmin: true,
         isVerified: true,
         createdAt: true
@@ -130,6 +131,7 @@ export async function optionalAuth(req, res, next) {
           email: true,
           username: true,
           learningScore: true,
+          role: true,
           isAdmin: true,
           isVerified: true,
           createdAt: true
