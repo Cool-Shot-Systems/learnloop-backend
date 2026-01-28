@@ -11,6 +11,10 @@ import { sendEmail } from './emailService.js';
 /**
  * Hash a token using SHA-256
  * 
+ * Note: SHA-256 is used here for its speed, not for password-strength security.
+ * The security relies on the 32-byte random token (64 hex characters), not the hash.
+ * Since tokens are short-lived (15 minutes) and randomly generated, SHA-256 is sufficient.
+ * 
  * @param {string} token - Plain text token
  * @returns {string} Hashed token
  */
@@ -89,29 +93,50 @@ The LearnLoop Team`;
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <title>Verify your LearnLoop account</title>
+      <style type="text/css">
+        @media only screen and (max-width: 600px) {
+          .email-container {
+            width: 100% !important;
+          }
+          .content-padding {
+            padding: 24px !important;
+          }
+          .heading {
+            font-size: 24px !important;
+          }
+          .button-cell {
+            padding: 14px 32px !important;
+          }
+        }
+      </style>
       <!--[if mso]>
       <style type="text/css">
         body, table, td {font-family: Arial, sans-serif !important;}
+        .gradient-bg {background-color: #667eea !important;}
       </style>
       <![endif]-->
     </head>
-    <body style="margin: 0; padding: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;">
+    <body style="margin: 0; padding: 0; background-color: #667eea; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
       <!-- Wrapper table for email client compatibility -->
-      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="gradient-bg" style="background-color: #667eea; min-height: 100vh;">
         <tr>
           <td style="padding: 40px 20px;" align="center">
             <!-- Main content card -->
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" class="email-container" style="max-width: 600px; background-color: #ffffff; border-radius: 16px;">
               <tr>
-                <td style="padding: 48px 40px;">
+                <td class="content-padding" style="padding: 48px 40px;">
                   <!-- Logo/Brand section -->
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                     <tr>
                       <td align="center" style="padding-bottom: 32px;">
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 64px; height: 64px; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-                          <span style="color: white; font-size: 32px; font-weight: bold;">L</span>
-                        </div>
-                        <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #1a202c; line-height: 1.3;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                          <tr>
+                            <td align="center" style="background-color: #667eea; width: 64px; height: 64px; border-radius: 16px;">
+                              <span style="color: #ffffff; font-size: 32px; font-weight: bold; line-height: 64px;">L</span>
+                            </td>
+                          </tr>
+                        </table>
+                        <h1 class="heading" style="margin: 16px 0 0 0; font-size: 28px; font-weight: 700; color: #1a202c; line-height: 1.3;">
                           Welcome to LearnLoop!
                         </h1>
                         <p style="margin: 8px 0 0 0; font-size: 14px; color: #718096;">
@@ -142,10 +167,15 @@ The LearnLoop Team`;
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                     <tr>
                       <td align="center" style="padding: 16px 0 32px 0;">
-                        <a href="${verificationUrl}" 
-                           style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #4299e1 50%, #38b2ac 100%); color: #ffffff; text-decoration: none; padding: 16px 48px; border-radius: 8px; font-size: 16px; font-weight: 600; text-align: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); transition: transform 0.2s;">
-                          Verify my email
-                        </a>
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                          <tr>
+                            <td align="center" class="button-cell" style="background-color: #4299e1; border-radius: 8px; padding: 16px 48px;">
+                              <a href="${verificationUrl}" style="color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; display: block;">
+                                Verify my email
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
                       </td>
                     </tr>
                   </table>
@@ -167,16 +197,10 @@ The LearnLoop Team`;
                   <!-- Expiry notice -->
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                     <tr>
-                      <td style="padding: 24px 0; background: #fef5e7; border-radius: 8px; margin-top: 24px;">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                          <tr>
-                            <td align="center" style="padding: 0 20px;">
-                              <p style="margin: 0; font-size: 14px; color: #975a16; line-height: 1.5;">
-                                <span style="font-size: 18px;">⏱️</span> <strong>Important:</strong> This verification link will expire in <strong>15 minutes</strong>.
-                              </p>
-                            </td>
-                          </tr>
-                        </table>
+                      <td style="padding: 24px 20px; background-color: #fef5e7; border-radius: 8px;">
+                        <p style="margin: 0; font-size: 14px; color: #975a16; line-height: 1.5; text-align: center;">
+                          <span style="font-size: 18px;">⏱️</span> <strong>Important:</strong> This verification link will expire in <strong>15 minutes</strong>.
+                        </p>
                       </td>
                     </tr>
                   </table>
@@ -204,7 +228,7 @@ The LearnLoop Team`;
                   <!-- Footer -->
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                     <tr>
-                      <td style="padding: 32px 0 0 0; border-top: 1px solid #e2e8f0; margin-top: 32px;">
+                      <td style="padding: 32px 0 0 0; border-top: 1px solid #e2e8f0;">
                         <p style="margin: 16px 0 0 0; font-size: 14px; color: #4a5568; line-height: 1.5;">
                           Best regards,<br>
                           <strong>Cool Shot Systems</strong><br>
@@ -227,38 +251,9 @@ The LearnLoop Team`;
                 </td>
               </tr>
             </table>
-
-            <!-- Mobile optimization note -->
-            <!--[if mso]>
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600">
-              <tr>
-                <td style="padding: 20px 0;">
-                  <p style="font-size: 12px; color: #ffffff; text-align: center;">
-                    Best viewed in mobile email clients
-                  </p>
-                </td>
-              </tr>
-            </table>
-            <![endif]-->
           </td>
         </tr>
       </table>
-
-      <!-- Mobile-specific styles -->
-      <style type="text/css">
-        @media only screen and (max-width: 600px) {
-          .content-wrapper {
-            padding: 24px !important;
-          }
-          h1 {
-            font-size: 24px !important;
-          }
-          .button {
-            padding: 14px 32px !important;
-            font-size: 15px !important;
-          }
-        }
-      </style>
     </body>
     </html>
   `;

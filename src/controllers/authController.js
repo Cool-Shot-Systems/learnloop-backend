@@ -203,7 +203,7 @@ export async function login(req, res) {
     }
 
     // Check if email is verified
-    if (!user.emailVerified && !user.isVerified) {
+    if (!user.emailVerified) {
       return res.status(403).json({
         error: 'Please verify your email to continue'
       });
@@ -290,7 +290,7 @@ export async function verifyEmail(req, res) {
     }
 
     // Check if user is already verified
-    if (verificationToken.user.emailVerified || verificationToken.user.isVerified) {
+    if (verificationToken.user.emailVerified) {
       // Mark token as used
       await prisma.verificationToken.update({
         where: { id: verificationToken.id },
@@ -369,7 +369,7 @@ export async function resendVerificationEmail(req, res) {
     }
 
     // Check if already verified
-    if (user.emailVerified || user.isVerified) {
+    if (user.emailVerified) {
       return res.status(400).json({
         error: 'Email is already verified'
       });

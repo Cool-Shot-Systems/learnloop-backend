@@ -35,10 +35,12 @@ function createTransporter() {
     return null;
   }
 
+  const port = parseInt(SMTP_PORT || '587', 10);
+  
   const transporter = nodemailer.createTransport({
     host: SMTP_HOST,
-    port: parseInt(SMTP_PORT || '587', 10),
-    secure: false, // true for port 465, false for other ports (587 uses STARTTLS)
+    port: port,
+    secure: port === 465, // true for port 465 (SSL), false for 587 (STARTTLS)
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASSWORD,
