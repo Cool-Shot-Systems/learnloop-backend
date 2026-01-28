@@ -26,6 +26,7 @@ model User {
   learningScore  Int      @default(0)
   isAdmin        Boolean  @default(false) // Phase 8: Admin flag for moderation
   isVerified     Boolean  @default(false) // Email verification status
+  emailVerified  Boolean  @default(false) // Email verification status (alternative field name)
   createdAt      DateTime @default(now())
 
   // Relations
@@ -45,15 +46,17 @@ model User {
 // VERIFICATION TOKEN MODEL
 // ====================
 // Email verification tokens for new user accounts
-// - Secure random tokens for email verification
-// - Tokens expire after 24 hours
-// - Invalidated after successful verification
+// - Secure hashed tokens for email verification
+// - Tokens expire after 15 minutes
+// - One active token per user (old tokens are deleted when creating new ones)
+// - usedAt tracks when token was consumed
 model VerificationToken {
-  id        Int      @id @default(autoincrement())
-  userId    String   @db.Uuid
-  token     String   @unique
+  id        Int       @id @default(autoincrement())
+  userId    String    @db.Uuid
+  token     String    @unique // Hashed token for security
   expiresAt DateTime
-  createdAt DateTime @default(now())
+  usedAt    DateTime? // Nullable - set when token is used
+  createdAt DateTime  @default(now())
 
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
