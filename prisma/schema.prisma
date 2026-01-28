@@ -22,6 +22,7 @@ model User {
   email          String   @unique
   username       String   @unique
   hashedPassword String
+  bio            String?  @db.VarChar(160) // Optional bio, max 160 characters
   learningScore  Int      @default(0)
   isAdmin        Boolean  @default(false) // Phase 8: Admin flag for moderation
   createdAt      DateTime @default(now())
