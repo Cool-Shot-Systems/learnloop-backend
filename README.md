@@ -154,6 +154,12 @@ POST /api/auth/register
 POST /api/auth/login
 ```
 
+### Settings
+```
+GET /api/me (auth required)
+PUT /api/me (auth required)
+```
+
 ### Users
 ```
 GET /api/users/:id

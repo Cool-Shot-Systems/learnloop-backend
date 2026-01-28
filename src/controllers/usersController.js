@@ -29,6 +29,7 @@ export async function getUserById(req, res) {
       select: {
         id: true,
         username: true,
+        bio: true,
         createdAt: true,
         learningScore: true
         // Explicitly exclude: email, hashedPassword, isAdmin
