@@ -54,6 +54,8 @@ const corsOptions = {
       if (!isProduction) {
         return callback(null, true);
       }
+      // Log rejected no-origin requests for security monitoring
+      console.warn('CORS: Rejected request with no origin header in production');
       return callback(null, false);
     }
 
