@@ -21,12 +21,14 @@ import feedRoutes from './src/routes/feedRoutes.js';
 
 const app = express();
 
-// Trust proxy - Required for express-rate-limit to work on Render
+// Middleware order is critical for proper functionality:
+// 1. Trust proxy - Must be first for rate limiting to work behind reverse proxies
 app.set('trust proxy', 1);
 
 const PORT = process.env.PORT || 3000;
 
 // CORS Configuration
+// 2. CORS - Applied before body parsing for efficient preflight handling
 // Dynamic origin function to support:
 // - Requests with no origin (Render health checks, server-side requests)
 // - Vercel deployments (https://*.vercel.app including learnloop-frontend.vercel.app)
@@ -83,9 +85,12 @@ const corsOptions = {
 // Apply CORS middleware before all routes
 app.use(cors(corsOptions));
 
-// Middleware
+// 3. Body parsers - Parse request bodies before routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// 4. Rate limiting - Applied per-route in individual route files (see src/routes/*)
+// 5. Routes - Defined below with route-specific rate limiters
 
 // Health check endpoint
 app.get('/health', (req, res) => {
