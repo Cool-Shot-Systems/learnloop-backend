@@ -20,26 +20,25 @@ import adminRoutes from './src/routes/adminRoutes.js';
 import feedRoutes from './src/routes/feedRoutes.js';
 
 const app = express();
+
+// Trust proxy - Required for express-rate-limit to work on Render
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 3000;
 
 // CORS Configuration
 // Dynamic origin function to support:
-// - Vercel preview deployments (https://*.vercel.app)
+// - Requests with no origin (Render health checks, server-side requests)
+// - Vercel deployments (https://*.vercel.app including learnloop-frontend.vercel.app)
 // - localhost for development only
 // - Custom domains via ALLOWED_ORIGINS environment variable
-// - Future domain changes without code edits
 const corsOptions = {
   origin: function (origin, callback) {
     const isProduction = process.env.NODE_ENV === 'production';
 
-    // Allow requests with no origin only in development (e.g., Postman, curl)
+    // Allow requests with no origin (e.g., Render health checks, server-side requests, Postman, curl)
     if (!origin) {
-      if (!isProduction) {
-        return callback(null, true);
-      }
-      // In production, log and reject no-origin requests for security monitoring
-      console.warn('CORS: Rejected request with no origin header in production');
-      return callback(null, false);
+      return callback(null, true);
     }
 
     // Build allowed patterns based on environment
@@ -75,7 +74,7 @@ const corsOptions = {
     }
   },
   credentials: true, // Allow cookies and authorization headers
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow JSON and auth headers
   optionsSuccessStatus: 200, // Return 200 for OPTIONS preflight requests
   maxAge: 86400 // Cache preflight responses for 24 hours (improves performance)
