@@ -280,7 +280,9 @@ export async function verifyEmail(req, res) {
     // Validation
     if (!token) {
       return res.status(400).json({
-        error: 'Verification token is required'
+        error: 'Verification token is required',
+        message: 'Please provide a verification token from your email.',
+        code: 'MISSING_TOKEN'
       });
     }
 
@@ -295,7 +297,9 @@ export async function verifyEmail(req, res) {
 
     if (!verificationToken) {
       return res.status(400).json({
-        error: 'Invalid verification token'
+        error: 'Invalid verification token',
+        message: 'This verification link is invalid. Please request a new verification email.',
+        code: 'INVALID_TOKEN'
       });
     }
 
@@ -309,7 +313,9 @@ export async function verifyEmail(req, res) {
     // Check if token has expired
     if (isTokenExpired(verificationToken.expiresAt)) {
       return res.status(400).json({
-        error: 'Verification token has expired. Please request a new one.'
+        error: 'Verification token has expired',
+        message: 'This verification link has expired. Please request a new verification email.',
+        code: 'TOKEN_EXPIRED'
       });
     }
 
@@ -376,7 +382,9 @@ export async function resendVerificationEmail(req, res) {
     // Validation
     if (!email) {
       return res.status(400).json({
-        error: 'Email is required'
+        error: 'Email is required',
+        message: 'Please provide your email address to resend the verification email.',
+        code: 'MISSING_EMAIL'
       });
     }
 
@@ -395,7 +403,9 @@ export async function resendVerificationEmail(req, res) {
     // Check if already verified
     if (user.emailVerified) {
       return res.status(400).json({
-        error: 'Email is already verified'
+        error: 'Email is already verified',
+        message: 'Your email has already been verified. You can log in now.',
+        code: 'ALREADY_VERIFIED'
       });
     }
 
