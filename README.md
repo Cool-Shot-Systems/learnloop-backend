@@ -110,7 +110,20 @@ DATABASE_URL="postgresql://username:password@localhost:5432/learnloop?schema=pub
 JWT_SECRET="your-secret-key-here"
 JWT_EXPIRES_IN="7d"
 PORT=3000
+
+# For production deployment:
+NODE_ENV="production"
+
+# Optional: Add custom domains that need API access
+# ALLOWED_ORIGINS="https://app.example.com"
 ```
+
+**CORS is pre-configured** to support:
+- All Vercel preview deployments (*.vercel.app)
+- Localhost for development
+- Custom domains via ALLOWED_ORIGINS
+
+See [SETUP.md](./SETUP.md#cors-configuration-for-deployment) for CORS details.
 
 ### 3. Setup Database
 ```bash

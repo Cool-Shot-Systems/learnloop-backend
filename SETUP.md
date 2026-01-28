@@ -238,3 +238,89 @@ After modifying `prisma/schema.prisma`:
 - Content validation (word counts, character limits) will be enforced at the API layer in future phases
 - The platform intentionally does NOT use AI for content generation or assistance
 - All rules are enforced at database and API level, not just frontend
+
+## CORS Configuration for Deployment
+
+### Overview
+
+The backend includes production-ready CORS (Cross-Origin Resource Sharing) configuration that allows:
+- All Vercel preview deployments (https://*.vercel.app)
+- Localhost for local development
+- Custom production domains via environment variable
+- Proper security for cross-origin requests
+
+### Environment Variables
+
+Add these to your deployment platform's environment variables:
+
+```env
+# Required for production security
+NODE_ENV="production"
+
+# Optional: Add custom domains that need access to your API
+# Comma-separated list of allowed origins
+ALLOWED_ORIGINS="https://app.example.com,https://www.example.com"
+```
+
+### How CORS Works in This Project
+
+**Development Mode (NODE_ENV not set or = "development"):**
+- ✅ Allows all Vercel deployments (https://*.vercel.app)
+- ✅ Allows localhost (http://localhost:*, http://127.0.0.1:*)
+- ✅ Allows requests with no origin (Postman, curl, etc.)
+
+**Production Mode (NODE_ENV = "production"):**
+- ✅ Allows all Vercel deployments (https://*.vercel.app)
+- ✅ Allows custom domains from ALLOWED_ORIGINS
+- ❌ Blocks localhost origins (security)
+- ❌ Blocks requests with no origin header (security)
+- ❌ Requires HTTPS for all origins (except localhost in dev)
+
+### Vercel Deployment
+
+When deploying your Next.js frontend to Vercel:
+1. No code changes needed - all *.vercel.app domains are automatically allowed
+2. Preview deployments work out of the box
+3. Production deployment works automatically
+
+### Custom Domain
+
+If using a custom domain (e.g., app.example.com):
+1. Set `ALLOWED_ORIGINS` environment variable on your backend deployment
+2. Add your domain: `ALLOWED_ORIGINS="https://app.example.com"`
+3. For multiple domains: `ALLOWED_ORIGINS="https://app.example.com,https://www.example.com"`
+
+### Security Features
+
+- **HTTPS Enforcement**: Production origins must use HTTPS (except localhost in dev)
+- **Dynamic Origin Validation**: Origins are validated against patterns, not hardcoded
+- **Credentials Support**: Allows cookies and Authorization headers
+- **Preflight Caching**: OPTIONS requests are cached for 24 hours (performance)
+- **Environment Awareness**: Different security policies for dev vs production
+
+### Testing CORS
+
+Test your CORS configuration locally:
+
+```bash
+# Test with Vercel origin
+curl -i http://localhost:3000/health \
+  -H "Origin: https://myapp.vercel.app"
+
+# Test with localhost origin
+curl -i http://localhost:3000/health \
+  -H "Origin: http://localhost:3000"
+
+# Test OPTIONS preflight request
+curl -i -X OPTIONS http://localhost:3000/api/auth/register \
+  -H "Origin: https://myapp.vercel.app" \
+  -H "Access-Control-Request-Method: POST" \
+  -H "Access-Control-Request-Headers: Content-Type,Authorization"
+```
+
+Expected headers in response:
+- `Access-Control-Allow-Origin: <your-origin>`
+- `Access-Control-Allow-Credentials: true`
+- `Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS`
+- `Access-Control-Allow-Headers: Content-Type,Authorization`
+- `Access-Control-Max-Age: 86400` (for OPTIONS requests)
