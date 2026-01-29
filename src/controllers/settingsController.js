@@ -284,15 +284,6 @@ export async function changePassword(req, res) {
       });
     }
 
-    // Validate new password is different from current
-    if (currentPassword === newPassword) {
-      return res.status(400).json({
-        error: 'New password must be different from current password',
-        message: 'Please choose a different password.',
-        code: 'SAME_PASSWORD'
-      });
-    }
-
     // Get user with password hash
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -321,6 +312,18 @@ export async function changePassword(req, res) {
         error: 'Current password is incorrect',
         message: 'The current password you entered is incorrect.',
         code: 'INVALID_CURRENT_PASSWORD'
+      });
+    }
+
+    // Validate new password is different from current password
+    // Use bcrypt.compare to avoid timing attacks
+    const isSamePassword = await bcrypt.compare(newPassword, user.hashedPassword);
+
+    if (isSamePassword) {
+      return res.status(400).json({
+        error: 'New password must be different from current password',
+        message: 'Please choose a different password.',
+        code: 'SAME_PASSWORD'
       });
     }
 
