@@ -1,8 +1,9 @@
 import { useAuth } from "../context/AuthContext";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Navbar() {
-  const { user, signInWithGoogle, logOut, sendVerification } = useAuth();
+  const { user, logOut, sendVerification } = useAuth();
 
   return (
     <div>
@@ -37,12 +38,12 @@ export default function Navbar() {
             </button>
           </div>
         ) : (
-          <button
-            onClick={signInWithGoogle}
-            className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
+          <Link
+            href="/login"
+            className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 text-white"
           >
-            Sign In with Google
-          </button>
+            Sign In
+          </Link>
         )}
       </div>
     </nav>

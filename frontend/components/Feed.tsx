@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPosts, Post } from "../lib/firestore/posts";
+import { getPosts, Post } from "../lib/realtime/posts";
 
 export default function Feed({ refreshTrigger }: { refreshTrigger: number }) {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -33,8 +33,8 @@ export default function Feed({ refreshTrigger }: { refreshTrigger: number }) {
             <div className="flex items-center gap-2 mb-2">
               <div className="font-semibold text-gray-900">{post.authorName}</div>
               <div className="text-xs text-gray-500">
-                {post.createdAt?.seconds
-                  ? new Date(post.createdAt.seconds * 1000).toLocaleDateString()
+                {post.createdAt
+                  ? new Date(post.createdAt).toLocaleDateString()
                   : "Just now"}
               </div>
             </div>

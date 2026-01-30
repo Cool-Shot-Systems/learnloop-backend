@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { createPost } from "../lib/firestore/posts";
+import { createPost } from "../lib/realtime/posts";
 
 export default function PostComposer({ onPostCreated }: { onPostCreated: () => void }) {
   const [content, setContent] = useState("");
